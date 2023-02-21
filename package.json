@@ -1,9 +1,10 @@
 {
   "name": "@probablyarth/jason",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Typesafe ORM for JSON files.",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,7 +30,10 @@
   "author": "probablyarth <probablyarth@gmail.com> (https://linkedin.com/in/probablyarth)",
   "license": "ISC",
   "devDependencies": {
+    "@jest/globals": "^29.4.3",
+    "@probablyarth/jason": "^1.0.4",
     "@types/node": "^18.14.0",
+    "ts-jest": "^29.0.5",
     "typescript": "^4.9.5"
   }
 }
