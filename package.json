@@ -1,0 +1,35 @@
+{
+  "name": "@probablyarth/jason",
+  "version": "1.0.0",
+  "description": "Typesafe ORM for JSON files.",
+  "scripts": {
+    "build": "tsc"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "prepare": "npm run build",
+  "keywords": [
+    "json",
+    "orm",
+    "json-orm",
+    "jsondb",
+    "db"
+  ],
+  "files": [
+    "dist/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/probablyArth/jason"
+  },
+  "bugs": {
+    "url": "https://github.com/probablyArth/jason/issues",
+    "email": "probablyarth@gmail.com"
+  },
+  "author": "probablyarth <probablyarth@gmail.com> (https://linkedin.com/in/probablyarth)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.14.0",
+    "typescript": "^4.9.5"
+  }
+}
