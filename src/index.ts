@@ -1,4 +1,4 @@
-import { Init } from "./db.js";
-import { Model } from "./Model.js";
+import { Init } from "./db";
+import { Model } from "./Model";
 
 export { Init, Model };

@@ -1,22 +1,7 @@
 import { writeFileSync } from "fs";
-import { data, filePath } from "./db.js";
-import { getIndex, search, searchOne } from "./utils/queryHelpers.js";
+import { data, filePath } from "./db";
+import { getIndex, search, searchOne } from "./utils/queryHelpers";
 import { randomUUID } from "crypto";
-
-/**
- * Defines the properties that can be used in the model. This includes all
- * basic JavaScript types, and can also contain nested properties and arrays.
- */
-interface ModelProps {
-  [key: string]:
-    | string
-    | number
-    | boolean
-    | Date
-    | undefined
-    | ModelProps
-    | ModelProps[];
-}
 
 /**
  * Defines a schema with an additional `id` property that uniquely identifies
@@ -31,11 +16,9 @@ export interface schemaWithId<T> extends Record<string, unknown> {
  * A class that provides a simple ORM-like interface for working with data
  * stored in a JSON database.
  *
- * @template T The type of record that this model represents. This is defined by
- * the `ModelProps` interface, and can include any properties that can be
- * represented in JSON.
+ * @template T The type of record that this model represents.
  */
-export class Model<T extends ModelProps> {
+export class Model<T> {
   /**
    * The array of records that make up the data for this model. Each record
    * should be an object that conforms to the `schemaWithId` interface.
@@ -119,6 +102,21 @@ export class Model<T extends ModelProps> {
     return search<T, schemaWithId<T>>(query, this.data);
   }
 
+  /**
+   * Updates the record by id.
+   *
+   * @param id id of the record.
+   * @param data the data to be updated.
+   * @returns 1 if the record exists else -1.
+   */
+  updateOneById(id: string, data: T): number {
+    const index = getIndex({ id }, this.data);
+    if (index !== -1) {
+      this.data[index] = { ...this.data[index], ...data };
+      return 1;
+    }
+    return -1;
+  }
   /**
    * Deletes a single record that matches the given query.
    *

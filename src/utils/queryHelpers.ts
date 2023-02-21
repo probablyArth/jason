@@ -1,4 +1,4 @@
-import { schemaWithId } from "../Model.js";
+import { schemaWithId } from "../Model";
 
 interface HasUid<T> extends schemaWithId<T> {}
 
