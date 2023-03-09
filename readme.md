@@ -61,7 +61,7 @@ const user = userModel.findById(userId);
 console.log(user);
 ```
 
-More examples in the [examples folder](http://github.com/probablyarth/jason/examples.ts/)
+More examples in the [examples folder](https://github.com/probablyArth/jason/blob/main/examples.ts)
 
 ## Disclaimer
 
