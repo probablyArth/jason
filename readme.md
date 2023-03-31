@@ -13,7 +13,7 @@ npm install @probablyarth/jason
 - yarn
 
 ```bash
-yarn add @probablyarth/json
+yarn add @probablyarth/jason
 ```
 
 ## Usage
