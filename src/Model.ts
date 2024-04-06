@@ -2,15 +2,7 @@ import { writeFileSync } from "fs";
 import { data, filePath } from "./db";
 import { getIndex, search, searchOne } from "./utils/queryHelpers";
 import { randomUUID } from "crypto";
-
-/**
- * Defines a schema with an additional `id` property that uniquely identifies
- * each record in the database.
- */
-export interface schemaWithId<T> extends Record<string, unknown> {
-  id: string;
-  [key: string]: unknown;
-}
+import { Query, SchemaWithId } from "./types";
 
 /**
  * A class that provides a simple ORM-like interface for working with data
@@ -23,7 +15,7 @@ export class Model<T> {
    * The array of records that make up the data for this model. Each record
    * should be an object that conforms to the `schemaWithId` interface.
    */
-  private data: schemaWithId<T>[];
+  private data: SchemaWithId<T>[];
   private tableName: string;
 
   /**
@@ -79,8 +71,8 @@ export class Model<T> {
    * @returns The first record that matches the provided query, or `undefined`
    * if no matching record is found.
    */
-  findOne(query: T | schemaWithId<T>): schemaWithId<T> | undefined {
-    return searchOne<T, schemaWithId<T>>(query, this.data);
+  findOne(query: Query<T>): SchemaWithId<T> | undefined {
+    return searchOne<T>(query, this.data);
   }
 
   /**
@@ -88,7 +80,7 @@ export class Model<T> {
    * property.
    */
 
-  findById(id: string): schemaWithId<T> {
+  findById(id: string): SchemaWithId<T> {
     return this.data.find((value) => value.id == id);
   }
 
@@ -98,8 +90,8 @@ export class Model<T> {
    * @param query The query to be executed.
    * @returns An array of records that match the query.
    */
-  findMany(query: T | schemaWithId<T>): schemaWithId<T>[] {
-    return search<T, schemaWithId<T>>(query, this.data);
+  findMany(query: Query<T>): SchemaWithId<T>[] {
+    return search<T>(query, this.data);
   }
 
   /**
@@ -110,24 +102,27 @@ export class Model<T> {
    * @returns 1 if the record exists else -1.
    */
   updateOneById(id: string, data: T): number {
-    const index = getIndex({ id }, this.data);
+    
+    const index = getIndex({id} as Query<T>, this.data);
     if (index !== -1) {
       this.data[index] = { ...this.data[index], ...data };
       return 1;
     }
     return -1;
   }
+
   /**
    * Deletes a single record that matches the given query.
    *
    * @param data The query to be executed.
    * @returns The record that was deleted, or undefined if no records were deleted.
    */
-  deleteOne(query: T | schemaWithId<T>): schemaWithId<T> | undefined {
+  
+  deleteOne(query: Query<T>): SchemaWithId<T> | undefined {
     const index = getIndex(query, this.data);
     if (index !== -1) {
       const [deleted] = this.data.splice(index, 1);
-      return deleted as schemaWithId<T>;
+      return deleted as SchemaWithId<T>;
     }
   }
 
@@ -137,11 +132,11 @@ export class Model<T> {
    * @param id The ID of the record to be deleted.
    * @returns The record that was deleted, or undefined if no such record exists.
    */
-  deleteOneById(id: string): schemaWithId<T> | undefined {
-    const index = getIndex({ id }, this.data);
+  deleteOneById(id: string): SchemaWithId<T> | undefined {
+    const index = getIndex({ id } as Query<T>, this.data);
     if (index !== -1) {
       const [deleted] = this.data.splice(index, 1);
-      return deleted as schemaWithId<T>;
+      return deleted as SchemaWithId<T>;
     }
   }
   /**
