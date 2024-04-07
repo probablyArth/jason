@@ -11,12 +11,22 @@ import { Query, SchemaWithId } from "./types";
  * @template T The type of record that this model represents.
  */
 export class Model<T> {
+
+  private indexes: Map<string, number>;
+
   /**
    * The array of records that make up the data for this model. Each record
    * should be an object that conforms to the `schemaWithId` interface.
    */
   private data: SchemaWithId<T>[];
   private tableName: string;
+
+  private buildIndexes() {
+    this.indexes = new Map();
+    this.data.forEach((object, index) => {
+      this.indexes.set(object.id, index);
+    })
+  }
 
   /**
    * Creates a new `Model` instance for a specified table. The `tableName`
@@ -26,6 +36,7 @@ export class Model<T> {
    * @param tableName The name of the table to create the model for.
    */
   constructor(tableName: string) {
+    this.indexes = new Map();
     this.tableName = tableName;
     if (!data || !data[tableName]) {
       this.data = [];
@@ -45,6 +56,7 @@ export class Model<T> {
   insertOne(data: T): string {
     const id: string = randomUUID();
     this.data.push({ ...data, id });
+    this.indexes.set(id, this.data.length-1);
     return id;
   }
 
@@ -59,6 +71,7 @@ export class Model<T> {
     data.forEach((record) => {
       let id: string = randomUUID();
       this.data.push({ ...record, id });
+      this.indexes.set(id, this.data.length-1);
     });
   }
 
@@ -80,8 +93,10 @@ export class Model<T> {
    * property.
    */
 
-  findById(id: string): SchemaWithId<T> {
-    return this.data.find((value) => value.id == id);
+  findById(id: string): SchemaWithId<T> | undefined {
+    const index = this.indexes.get(id);
+    if (index === -1) return undefined;
+    return this.data[index];
   }
 
   /**
@@ -102,8 +117,7 @@ export class Model<T> {
    * @returns 1 if the record exists else -1.
    */
   updateOneById(id: string, data: T): number {
-    
-    const index = getIndex({id} as Query<T>, this.data);
+    const index = this.indexes.get(id);
     if (index !== -1) {
       this.data[index] = { ...this.data[index], ...data };
       return 1;
@@ -122,6 +136,7 @@ export class Model<T> {
     const index = getIndex(query, this.data);
     if (index !== -1) {
       const [deleted] = this.data.splice(index, 1);
+      this.buildIndexes();
       return deleted as SchemaWithId<T>;
     }
   }
@@ -133,12 +148,14 @@ export class Model<T> {
    * @returns The record that was deleted, or undefined if no such record exists.
    */
   deleteOneById(id: string): SchemaWithId<T> | undefined {
-    const index = getIndex({ id } as Query<T>, this.data);
+    const index = this.indexes.get(id);
     if (index !== -1) {
       const [deleted] = this.data.splice(index, 1);
+      this.buildIndexes();
       return deleted as SchemaWithId<T>;
     }
   }
+
   /**
    * Commits the memory changes to the actual database
    */
