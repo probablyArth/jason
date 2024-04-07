@@ -7,6 +7,9 @@
     "test": "jest"
   },
   "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "types": "dist/index.d.ts",
   "prepare": "npm run build",
   "keywords": [
