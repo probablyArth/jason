@@ -1,11 +1,11 @@
-import { readFileSync } from "fs";
+import { readFile } from "fs/promises";
 
 export let data: any;
 export let filePath: string;
 
-export function Init(path: string) {
+export async function Init(path: string) {
   filePath = path;
-  const readData = readFileSync(path, { encoding: "utf-8" });
+  const readData = await readFile(path, { encoding: "utf-8" });
   if (readData == "") {
     data = {};
     return;

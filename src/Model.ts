@@ -1,4 +1,4 @@
-import { writeFileSync } from "fs";
+import { writeFile } from "fs/promises";
 import { data, filePath } from "./db";
 import { getIndex, search, searchOne } from "./utils/queryHelpers";
 import { randomUUID } from "crypto";
@@ -159,8 +159,8 @@ export class Model<T> {
   /**
    * Commits the memory changes to the actual database
    */
-  commit() {
+  async commit() {
     data[this.tableName] = this.data;
-    writeFileSync(filePath, JSON.stringify(data), { encoding: "utf-8" });
+    await writeFile(filePath, JSON.stringify(data), { encoding: "utf-8" });
   }
 }
